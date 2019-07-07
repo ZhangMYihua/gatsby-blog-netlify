@@ -5,11 +5,14 @@ import Layout from "../components/layout"
 
 const Title = styled.h1`
   display: inline-block;
-  border-bottom: 1px solid;
 `
 
 const BlogTitle = styled.h3`
   margin-bottom: 20px;
+
+  &:hover {
+    color: #1dcaff;
+  }
 `
 
 const BlogLink = styled(Link)`
@@ -17,21 +20,25 @@ const BlogLink = styled(Link)`
   color: inherit;
 `
 
+const BlogBody = styled.div`
+  margin-bottom: 50px;
+`
+
 export default ({ data }) => {
   return (
     <Layout>
       <div>
-        <Title>Amazing Pandas Eating Things</Title>
+        <Title>Thoughts by Yihua</Title>
         <h4>{data.allMarkdownRemark.totalCount} Posts</h4>
         {data.allMarkdownRemark.edges.map(({ node }) => (
-          <div key={node.id}>
+          <BlogBody key={node.id}>
             <BlogLink to={node.fields.slug}>
               <BlogTitle>
                 {node.frontmatter.title} <span>— {node.frontmatter.date}</span>
               </BlogTitle>
             </BlogLink>
-            <p>{node.excerpt}</p>
-          </div>
+            <p>{node.frontmatter.description || node.excerpt}</p>
+          </BlogBody>
         ))}
       </div>
     </Layout>
@@ -48,11 +55,12 @@ export const query = graphql`
           frontmatter {
             title
             date(formatString: "DD MMMM, YYYY")
+            description
           }
           fields {
             slug
           }
-          excerpt
+          excerpt(truncate: true)
         }
       }
     }
